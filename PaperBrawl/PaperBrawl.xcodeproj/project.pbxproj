@@ -14,6 +14,7 @@
 		A76E3E911D33F53B00AE5A4F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A76E3E8F1D33F53B00AE5A4F /* Main.storyboard */; };
 		A76E3E931D33F53B00AE5A4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A76E3E921D33F53B00AE5A4F /* Assets.xcassets */; };
 		A76E3E961D33F53B00AE5A4F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A76E3E941D33F53B00AE5A4F /* LaunchScreen.storyboard */; };
+		A76E3E9E1D346D2B00AE5A4F /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A76E3E9D1D346D2B00AE5A4F /* Media.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		A76E3E921D33F53B00AE5A4F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A76E3E951D33F53B00AE5A4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A76E3E971D33F53B00AE5A4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A76E3E9D1D346D2B00AE5A4F /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				A76E3E921D33F53B00AE5A4F /* Assets.xcassets */,
 				A76E3E941D33F53B00AE5A4F /* LaunchScreen.storyboard */,
 				A76E3E971D33F53B00AE5A4F /* Info.plist */,
+				A76E3E9D1D346D2B00AE5A4F /* Media.xcassets */,
 			);
 			path = PaperBrawl;
 			sourceTree = "<group>";
@@ -129,6 +132,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A76E3E9E1D346D2B00AE5A4F /* Media.xcassets in Resources */,
 				A76E3E8A1D33F53B00AE5A4F /* GameScene.sks in Resources */,
 				A76E3E961D33F53B00AE5A4F /* LaunchScreen.storyboard in Resources */,
 				A76E3E931D33F53B00AE5A4F /* Assets.xcassets in Resources */,
@@ -297,6 +301,7 @@
 				A76E3E9C1D33F53B00AE5A4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
