@@ -9,6 +9,12 @@
 import SpriteKit
 
 class GameScene: SKScene {
+    
+    let playerLeft = SKSpriteNode(imageNamed: "arrowLeft")
+    let playerRight = SKSpriteNode(imageNamed: "arrowRight")
+    let playerUp = SKSpriteNode(imageNamed: "arrowUp")
+    let playerDown = SKSpriteNode(imageNamed: "arrowDown")
+    
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         let myLabel = SKLabelNode(fontNamed:"Helvetica Nue")
@@ -19,26 +25,16 @@ class GameScene: SKScene {
         self.addChild(myLabel)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-       /* Called when a touch begins */
-        
-        for touch in touches {
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for touch: AnyObject     in touches {
             let location = touch.locationInNode(self)
-            
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
+            if playerUp.containsPoint(location) {
+                print("Move up. Location: \(location)")
+            }
         }
     }
-   
+    
+    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
