@@ -54,10 +54,23 @@ class GameScene: SKScene {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        isFingerOnPlayerUp = false
-        isFingerOnPlayerDown = false
-        isFingerOnPlayerLeft = false
-        isFingerOnPlayerRight = false
+        
+        let touch = touches.first
+        let touchLocation = touch!.locationInNode(self)
+        if let body = physicsWorld.bodyAtPoint(touchLocation) {
+            if body.node!.name == "playerUp" {
+                isFingerOnPlayerUp = false
+            }
+            if body.node!.name == "playerDown" {
+                isFingerOnPlayerDown = false
+            }
+            if body.node!.name == "playerLeft" {
+                isFingerOnPlayerLeft = false
+            }
+            if body.node!.name == "playerRight" {
+                isFingerOnPlayerRight = false
+            }
+        }
     }
     
     override func update(currentTime: CFTimeInterval) {
