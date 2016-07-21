@@ -79,6 +79,28 @@ class GameScene: SKScene {
         }
     }
     
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        let sprite = childNodeWithName("playerSprite")
+        let touch = touches.first
+        let touchLocation = touch!.locationInNode(self)
+//        if let body = physicsWorld.bodyAtPoint(touchLocation) {
+//            if body.node!.name == "playerUp" {
+//                isFingerOnPlayerUp = false
+//            }
+//            if body.node!.name == "playerDown" {
+//                isFingerOnPlayerDown = false
+//            }
+//            if body.node!.name == "playerLeft" {
+//                isFingerOnPlayerLeft = false
+//                sprite!.removeActionForKey("runLeft")
+//            }
+//            if body.node!.name == "playerRight" {
+//                isFingerOnPlayerRight = false
+//                sprite!.removeActionForKey("runRight")
+//            }
+//        }
+    }
+    
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let sprite = childNodeWithName("playerSprite")
         let touch = touches.first
