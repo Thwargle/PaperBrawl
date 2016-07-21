@@ -12,6 +12,9 @@ let movePlayerRightButton = "playerRight"
 
 class GameScene: SKScene {
     
+    let sheet = playerAnimate()
+    var sequence: SKAction?
+    
     let playerLeft = SKSpriteNode(imageNamed: "arrowLeft")
     let playerRight = SKSpriteNode(imageNamed: "arrowRight")
     let playerUp = SKSpriteNode(imageNamed: "arrowUp")
@@ -23,8 +26,25 @@ class GameScene: SKScene {
     var isFingerOnPlayerRight = false
     
     var frameCount = 0
+    var jumpCount = 0
     
     override func didMoveToView(view: SKView) {
+        
+        let walk = SKAction.animateWithTextures(sheet.playerWalk(), timePerFrame: 0.033)
+        let turn = SKAction.animateWithTextures(sheet.playerTurn(), timePerFrame: 0.033)
+        let walkAnim = SKAction.repeatAction(walk, count:5)
+        
+        let moveRight = SKAction.moveToX(900, duration: walkAnim.duration)
+        let moveLeft = SKAction.moveToX(100, duration: walkAnim.duration)
+        
+        let mirrorDirection = SKAction.scaleXTo(-1, y:1, duration:0.0)
+        let resetDirection  = SKAction.scaleXTo(1,  y:1, duration:0.0)
+        
+        let walkAndMoveRight = SKAction.group([resetDirection,  walkAnim, moveRight]);
+        let walkAndMoveLeft  = SKAction.group([mirrorDirection, walkAnim, moveLeft]);
+        
+        sequence = SKAction.repeatActionForever(SKAction.sequence([walkAndMoveRight, turn, walkAndMoveLeft, turn]));
+        
         let borderBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
         
         borderBody.friction = 0
@@ -35,8 +55,16 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        let sprite = SKSpriteNode(texture: sheet.playerFunc0())
+        sprite.position = CGPointMake(100.0, CGFloat(rand() % 100) + 200.0)
+        
+        sprite.runAction(sequence!)
+        addChild(sprite)
+        
         let touch = touches.first
         let touchLocation = touch!.locationInNode(self)
+        
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
             if body.node!.name == "playerUp" {
                 isFingerOnPlayerUp = true
@@ -90,21 +118,28 @@ class GameScene: SKScene {
         }
         if(isFingerOnPlayerUp) {
             let player = childNodeWithName("playerSprite") as! SKSpriteNode
-            if(frameCount < 8) {
-                if(isFingerOnPlayerLeft) {
-                    player.physicsBody!.applyImpulse(CGVector(dx: -1, dy: 40.0))
-                }
-                if(isFingerOnPlayerRight) {
-                    player.physicsBody!.applyImpulse(CGVector(dx: 1, dy: 40.0))
+            if(jumpCount == 2)
+            {
+                isFingerOnPlayerUp = false
+            }
+            else
+            {
+                if(frameCount < 8) {
+                    if(isFingerOnPlayerLeft) {
+                        player.physicsBody!.applyImpulse(CGVector(dx: -1, dy: 40.0))
+                    }
+                    else if(isFingerOnPlayerRight) {
+                        player.physicsBody!.applyImpulse(CGVector(dx: 1, dy: 40.0))
+                    }
+                    else {
+                        player.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 40.0))
+                    }
+                    frameCount += 1
                 }
                 else {
-                    player.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 40.0))
+                    frameCount = 0
+                    isFingerOnPlayerUp = false
                 }
-                frameCount += 1
-            }
-            else {
-                frameCount = 0
-                isFingerOnPlayerUp = false
             }
         }
     }
