@@ -13,7 +13,8 @@ let movePlayerRightButton = "playerRight"
 class GameScene: SKScene {
     
     let sheet = playerAnimate()
-    var sequence: SKAction?
+    var sequenceRight: SKAction?
+    var sequenceLeft: SKAction?
     
     let playerLeft = SKSpriteNode(imageNamed: "arrowLeft")
     let playerRight = SKSpriteNode(imageNamed: "arrowRight")
@@ -31,19 +32,17 @@ class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         
         let walk = SKAction.animateWithTextures(sheet.playerWalk(), timePerFrame: 0.033)
-        let turn = SKAction.animateWithTextures(sheet.playerTurn(), timePerFrame: 0.033)
         let walkAnim = SKAction.repeatAction(walk, count:5)
         
-        let moveRight = SKAction.moveToX(900, duration: walkAnim.duration)
-        let moveLeft = SKAction.moveToX(100, duration: walkAnim.duration)
+        let walkAndMoveRight = SKAction.group([walkAnim])
+        let walkAndMoveLeft  = SKAction.group([walkAnim])
+        let resetDirection  = SKAction.scaleXTo(childNodeWithName("playerSprite")!.xScale * 1,  y:childNodeWithName("playerSprite")!.yScale, duration:0.0);
+        let mirrorDirection = SKAction.scaleXTo(childNodeWithName("playerSprite")!.xScale * -1, y:childNodeWithName("playerSprite")!.yScale, duration:0.0)
         
-        let mirrorDirection = SKAction.scaleXTo(-1, y:1, duration:0.0)
-        let resetDirection  = SKAction.scaleXTo(1,  y:1, duration:0.0)
+        //let mirrorDirection = SKAction.flipX
         
-        let walkAndMoveRight = SKAction.group([resetDirection,  walkAnim, moveRight]);
-        let walkAndMoveLeft  = SKAction.group([mirrorDirection, walkAnim, moveLeft]);
-        
-        sequence = SKAction.repeatActionForever(SKAction.sequence([walkAndMoveRight, turn, walkAndMoveLeft, turn]));
+        sequenceRight = SKAction.repeatActionForever(SKAction.sequence([resetDirection, walkAndMoveRight]));
+        sequenceLeft = SKAction.repeatActionForever(SKAction.sequence([mirrorDirection, walkAndMoveLeft]));
         
         let borderBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
         
@@ -56,11 +55,8 @@ class GameScene: SKScene {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
-        let sprite = SKSpriteNode(texture: sheet.playerFunc0())
-        sprite.position = CGPointMake(100.0, CGFloat(rand() % 100) + 200.0)
+        let sprite = childNodeWithName("playerSprite")
         
-        sprite.runAction(sequence!)
-        addChild(sprite)
         
         let touch = touches.first
         let touchLocation = touch!.locationInNode(self)
@@ -74,15 +70,17 @@ class GameScene: SKScene {
             }
             if body.node!.name == "playerLeft" {
                 isFingerOnPlayerLeft = true
+                sprite!.runAction(sequenceLeft!, withKey: "runLeft")
             }
             if body.node!.name == "playerRight" {
                 isFingerOnPlayerRight = true
+                sprite!.runAction(sequenceRight!, withKey: "runRight")
             }
         }
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        
+        let sprite = childNodeWithName("playerSprite")
         let touch = touches.first
         let touchLocation = touch!.locationInNode(self)
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
@@ -94,9 +92,11 @@ class GameScene: SKScene {
             }
             if body.node!.name == "playerLeft" {
                 isFingerOnPlayerLeft = false
+                sprite!.removeActionForKey("runLeft")
             }
             if body.node!.name == "playerRight" {
                 isFingerOnPlayerRight = false
+                sprite!.removeActionForKey("runRight")
             }
         }
     }
