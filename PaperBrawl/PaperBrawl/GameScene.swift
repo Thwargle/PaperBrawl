@@ -12,7 +12,10 @@ let movePlayerRightButton = "playerRight"
 
 class GameScene: SKScene {
     
+    var Count = 0
+    
     let sheet = pencilGirlAnimate()
+    
     var sequenceStand: SKAction?
     var sequenceRight: SKAction?
     var sequenceLeft: SKAction?
@@ -27,6 +30,12 @@ class GameScene: SKScene {
     var isFingerOnPlayerDown = false
     var isFingerOnPlayerLeft = false
     var isFingerOnPlayerRight = false
+    
+    var isFingerMovingOnPlayerUp = false
+    var isFingerMovingOnPlayerDown = false
+    var isFingerMovingOnPlayerLeft = false
+    var isFingerMovingOnPlayerRight = false
+    
     
     var frameCount = 0
     var jumpCount = 0
@@ -49,7 +58,7 @@ class GameScene: SKScene {
         sequenceStand = SKAction.repeatActionForever(SKAction.sequence([stand]));
         sequenceRight = SKAction.repeatActionForever(SKAction.sequence([resetDirection, walkAndMoveRight]));
         sequenceLeft = SKAction.repeatActionForever(SKAction.sequence([mirrorDirection, walkAndMoveLeft]));
-        sequenceJump = SKAction.repeatAction(jump, count: 1)
+        sequenceJump = SKAction.repeatAction(jumpAnim, count: 1)
         let borderBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
         
         borderBody.friction = 0
@@ -66,6 +75,7 @@ class GameScene: SKScene {
         
         let touch = touches.first
         let touchLocation = touch!.locationInNode(self)
+        
         
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
             if body.node!.name == "playerUp" {
@@ -87,24 +97,22 @@ class GameScene: SKScene {
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let sprite = childNodeWithName("playerSprite")
-        let touch = touches.first
-        let touchLocation = touch!.locationInNode(self)
+//        isFingerMovingOnPlayerLeft = false
+//        isFingerMovingOnPlayerRight = false
+//        let touch = touches.first
+//        let touchLocation = touch!.locationInNode(self)
 //        if let body = physicsWorld.bodyAtPoint(touchLocation) {
-//            if body.node!.name == "playerUp" {
-//                isFingerOnPlayerUp = false
-//            }
-//            if body.node!.name == "playerDown" {
-//                isFingerOnPlayerDown = false
-//            }
+//            
 //            if body.node!.name == "playerLeft" {
-//                isFingerOnPlayerLeft = false
-//                sprite!.removeActionForKey("runLeft")
+//                isFingerMovingOnPlayerLeft = true
 //            }
 //            if body.node!.name == "playerRight" {
-//                isFingerOnPlayerRight = false
-//                sprite!.removeActionForKey("runRight")
+//                isFingerMovingOnPlayerRight = true
 //            }
+//            
+//            Count++
+//            print(body.node!.name)
+//            print(Count)
 //        }
     }
     
@@ -116,19 +124,23 @@ class GameScene: SKScene {
             if body.node!.name == "playerUp" {
                 isFingerOnPlayerUp = false
                 sprite!.removeActionForKey("jump")
+                print("Ended ", body.node!.name)
             }
             if body.node!.name == "playerDown" {
                 isFingerOnPlayerDown = false
+                print("Ended ", body.node!.name)
             }
             if body.node!.name == "playerLeft" {
                 isFingerOnPlayerLeft = false
                 sprite!.removeActionForKey("runLeft")
                 sprite!.runAction(sequenceStand!, withKey: "standing")
+                print("Ended ", body.node!.name)
             }
             if body.node!.name == "playerRight" {
                 isFingerOnPlayerRight = false
                 sprite!.removeActionForKey("runRight")
                 sprite!.runAction(sequenceStand!, withKey: "standing")
+                print("Ended ", body.node!.name)
             }
         }
     }
