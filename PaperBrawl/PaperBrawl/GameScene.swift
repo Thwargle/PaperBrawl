@@ -12,9 +12,11 @@ let movePlayerRightButton = "playerRight"
 
 class GameScene: SKScene {
     
-    let sheet = playerAnimate()
+    let sheet = pencilGirlAnimate()
+    var sequenceStand: SKAction?
     var sequenceRight: SKAction?
     var sequenceLeft: SKAction?
+    var sequenceJump: SKAction?
     
     let playerLeft = SKSpriteNode(imageNamed: "arrowLeft")
     let playerRight = SKSpriteNode(imageNamed: "arrowRight")
@@ -31,8 +33,11 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         
-        let walk = SKAction.animateWithTextures(sheet.playerWalk(), timePerFrame: 0.033)
+        let stand = SKAction.animateWithTextures(sheet.pencilManStand(), timePerFrame: 0.066)
+        let walk = SKAction.animateWithTextures(sheet.pencilManWalk(), timePerFrame: 0.066)
         let walkAnim = SKAction.repeatAction(walk, count:5)
+        let jump = SKAction.animateWithTextures(sheet.pencilManJump(), timePerFrame: 0.066)
+        let jumpAnim = SKAction.repeatAction(jump, count:5)
         
         let walkAndMoveRight = SKAction.group([walkAnim])
         let walkAndMoveLeft  = SKAction.group([walkAnim])
@@ -41,9 +46,10 @@ class GameScene: SKScene {
         
         //let mirrorDirection = SKAction.flipX
         
+        sequenceStand = SKAction.repeatActionForever(SKAction.sequence([stand]));
         sequenceRight = SKAction.repeatActionForever(SKAction.sequence([resetDirection, walkAndMoveRight]));
         sequenceLeft = SKAction.repeatActionForever(SKAction.sequence([mirrorDirection, walkAndMoveLeft]));
-        
+        sequenceJump = SKAction.repeatAction(jump, count: 1)
         let borderBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
         
         borderBody.friction = 0
@@ -64,6 +70,7 @@ class GameScene: SKScene {
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
             if body.node!.name == "playerUp" {
                 isFingerOnPlayerUp = true
+                sprite!.runAction(sequenceJump!, withKey: "jump")
             }
             if body.node!.name == "playerDown" {
                 isFingerOnPlayerDown = true
@@ -108,6 +115,7 @@ class GameScene: SKScene {
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
             if body.node!.name == "playerUp" {
                 isFingerOnPlayerUp = false
+                sprite!.removeActionForKey("jump")
             }
             if body.node!.name == "playerDown" {
                 isFingerOnPlayerDown = false
@@ -115,10 +123,12 @@ class GameScene: SKScene {
             if body.node!.name == "playerLeft" {
                 isFingerOnPlayerLeft = false
                 sprite!.removeActionForKey("runLeft")
+                sprite!.runAction(sequenceStand!, withKey: "standing")
             }
             if body.node!.name == "playerRight" {
                 isFingerOnPlayerRight = false
                 sprite!.removeActionForKey("runRight")
+                sprite!.runAction(sequenceStand!, withKey: "standing")
             }
         }
     }
@@ -127,14 +137,14 @@ class GameScene: SKScene {
         if(isFingerOnPlayerLeft) {
             let player = childNodeWithName("playerSprite") as! SKSpriteNode
             
-            let playerX = player.position.x - 15
+            let playerX = player.position.x - 10
             
             player.position = CGPoint(x: playerX, y: player.position.y)
         }
         if(isFingerOnPlayerRight) {
             let player = childNodeWithName("playerSprite") as! SKSpriteNode
             
-            let playerX = player.position.x + 15
+            let playerX = player.position.x + 10
             
             player.position = CGPoint(x: playerX, y: player.position.y)
         }
@@ -148,13 +158,13 @@ class GameScene: SKScene {
             {
                 if(frameCount < 8) {
                     if(isFingerOnPlayerLeft) {
-                        player.physicsBody!.applyImpulse(CGVector(dx: -1, dy: 40.0))
+                        player.physicsBody!.applyImpulse(CGVector(dx: -1, dy: 55.0))
                     }
                     else if(isFingerOnPlayerRight) {
-                        player.physicsBody!.applyImpulse(CGVector(dx: 1, dy: 40.0))
+                        player.physicsBody!.applyImpulse(CGVector(dx: 1, dy: 55.0))
                     }
                     else {
-                        player.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 40.0))
+                        player.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 55.0))
                     }
                     frameCount += 1
                 }
