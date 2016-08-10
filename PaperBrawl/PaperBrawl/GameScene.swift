@@ -26,10 +26,10 @@ class GameScene: SKScene {
     let playerUp = SKSpriteNode(imageNamed: "arrowUp")
     let playerDown = SKSpriteNode(imageNamed: "arrowDown")
     
-    var isFingerOnPlayerUp = false
-    var isFingerOnPlayerDown = false
     var isFingerOnPlayerLeft = false
     var isFingerOnPlayerRight = false
+    var isFingerOnPlayerUp = false
+    var isFingerOnPlayerDown = false
     
     var isFingerMovingOnPlayerUp = false
     var isFingerMovingOnPlayerDown = false
@@ -70,17 +70,23 @@ class GameScene: SKScene {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
+        let touch = touches.first
+        
+        HandleTouchStart(touch!)
+    }
+    
+    func HandleTouchStart(touch: UITouch) {
+        
         let sprite = childNodeWithName("playerSprite")
         
         
-        let touch = touches.first
-        let touchLocation = touch!.locationInNode(self)
-        
+        let touchLocation = touch.locationInNode(self)
         
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
             if body.node!.name == "playerUp" {
                 isFingerOnPlayerUp = true
                 sprite!.runAction(sequenceJump!, withKey: "jump")
+                print("HandleTouchStart caught up")
             }
             if body.node!.name == "playerDown" {
                 isFingerOnPlayerDown = true
@@ -88,64 +94,114 @@ class GameScene: SKScene {
             if body.node!.name == "playerLeft" {
                 isFingerOnPlayerLeft = true
                 sprite!.runAction(sequenceLeft!, withKey: "runLeft")
+                print("HandleTouchStart caught left")
             }
             if body.node!.name == "playerRight" {
                 isFingerOnPlayerRight = true
                 sprite!.runAction(sequenceRight!, withKey: "runRight")
+                print("HandleTouchStart caught right")
             }
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        isFingerMovingOnPlayerLeft = false
-//        isFingerMovingOnPlayerRight = false
-//        let touch = touches.first
-//        let touchLocation = touch!.locationInNode(self)
-//        if let body = physicsWorld.bodyAtPoint(touchLocation) {
-//            
-//            if body.node!.name == "playerLeft" {
-//                isFingerMovingOnPlayerLeft = true
-//            }
-//            if body.node!.name == "playerRight" {
-//                isFingerMovingOnPlayerRight = true
-//            }
-//            
-//            Count++
-//            print(body.node!.name)
-//            print(Count)
-//        }
-    }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let sprite = childNodeWithName("playerSprite")
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        isFingerMovingOnPlayerLeft = false
+        isFingerMovingOnPlayerRight = false
+        isFingerMovingOnPlayerUp = false
+        isFingerMovingOnPlayerDown = false
+        
         let touch = touches.first
         let touchLocation = touch!.locationInNode(self)
         if let body = physicsWorld.bodyAtPoint(touchLocation) {
-            if body.node!.name == "playerUp" {
-                isFingerOnPlayerUp = false
-                sprite!.removeActionForKey("jump")
-                print("Ended ", body.node!.name)
-            }
-            if body.node!.name == "playerDown" {
-                isFingerOnPlayerDown = false
-                print("Ended ", body.node!.name)
-            }
+            
             if body.node!.name == "playerLeft" {
-                isFingerOnPlayerLeft = false
-                sprite!.removeActionForKey("runLeft")
-                sprite!.runAction(sequenceStand!, withKey: "standing")
-                print("Ended ", body.node!.name)
+                isFingerMovingOnPlayerLeft = true
             }
             if body.node!.name == "playerRight" {
-                isFingerOnPlayerRight = false
-                sprite!.removeActionForKey("runRight")
-                sprite!.runAction(sequenceStand!, withKey: "standing")
-                print("Ended ", body.node!.name)
+                isFingerMovingOnPlayerRight = true
             }
+            if body.node!.name == "playerUp" {
+                isFingerMovingOnPlayerUp = true
+            }
+            if body.node!.name == "playerDown" {
+                isFingerMovingOnPlayerDown = true
+            }
+            
+            Count += 1
+            print("body.node!.name: ", body.node!.name)
+            print("Count: ", Count)
+
+            if (isFingerOnPlayerLeft != isFingerMovingOnPlayerLeft) {
+                if (isFingerMovingOnPlayerLeft) {
+                    HandleTouchStart(touch!)
+                    print("Move detected left start")
+                } else {
+                    let button = childNodeWithName("playerLeft") as! SKSpriteNode
+                    HandleTouchEnd(button)
+                    print("Move detected left end")
+                }
+            }
+
+            if (isFingerOnPlayerRight != isFingerMovingOnPlayerRight) {
+                if (isFingerMovingOnPlayerRight) {
+                    HandleTouchStart(touch!)
+                    print("Move detected right start")
+                } else {
+                    let button = childNodeWithName("playerRight") as! SKSpriteNode
+                    HandleTouchEnd(button)
+                    print("Move detected right end")
+                }
+            }
+            
+            
+        
         }
     }
     
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        let touch = touches.first
+
+        
+        let touchLocation = touch!.locationInNode(self)
+        if let body = physicsWorld.bodyAtPoint(touchLocation) {
+            HandleTouchEnd(body.node!)
+        }
+        
+    }
+    
+    func HandleTouchEnd(node: SKNode) {
+        let sprite = childNodeWithName("playerSprite")
+        
+        if node.name == "playerUp" {
+            isFingerOnPlayerUp = false
+            sprite!.removeActionForKey("jump")
+            print("HandleTouchEnd Up Ended ", node.name)
+        }
+        if node.name == "playerDown" {
+            isFingerOnPlayerDown = false
+            print("HandleTouchEnd Down Ended ", node.name)
+        }
+        if node.name == "playerLeft" {
+            isFingerOnPlayerLeft = false
+            sprite!.removeActionForKey("runLeft")
+            sprite!.runAction(sequenceStand!, withKey: "standing")
+            print("HandleTouchEnd Left Ended ", node.name)
+        }
+        if node.name == "playerRight" {
+            isFingerOnPlayerRight = false
+            sprite!.removeActionForKey("runRight")
+            sprite!.runAction(sequenceStand!, withKey: "standing")
+            print("HandleTouchEnd Right Ended ", node.name)
+        }
+    }
+
     override func update(currentTime: CFTimeInterval) {
+        //let isFingerOnPlayerLeft = ( NSDate().timeIntervalSinceDate(pushedLeftTime) < 2 )
+        //let isFingerOnPlayerRight = ( NSDate().timeIntervalSinceDate(pushedRightTime) < 2 )
+
         if(isFingerOnPlayerLeft) {
             let player = childNodeWithName("playerSprite") as! SKSpriteNode
             
